@@ -1,6 +1,5 @@
 const express = require('express');
 const HttpStatus = require('http-status-codes');
-const http = require('http')
 const app = express();
 
 app.use(express.static('public'));
@@ -10,7 +9,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api', require('./routes/api'));
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res) {
     return res
         .status(HttpStatus.NOT_IMPLEMENTED)
         .json({
@@ -19,7 +18,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     const msg = err.message ? err.message : JSON.stringify(err);
 
     return res
