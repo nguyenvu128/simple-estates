@@ -2,30 +2,79 @@ const mongoose = require('mongoose');
 const postModel = require('../models/post.model');
 const HttpStatus = require('http-status-codes');
 const POST_COLUMNS = Object.keys(postModel.schema.paths);
-POST_COLUMNS.pop();
-const fields = ["city", "district", "ward", "street"];
+const indexOf__v = POST_COLUMNS.indexOf("__v");
+POST_COLUMNS.splice(indexOf__v, 1);
+const addressFields = ["city", "district", "ward", "street"];
 const POST_TYPE = require('../constant/post-type');
 const VIP_TYPE = require('../constant/vip-type');
 const postTypeIds = POST_TYPE.map(type => type.id);
 const vipTypeSNumber = Object.values(VIP_TYPE).map(numb => numb.toString());
-const testInputData = (str) => {
+const isAlphabetAndNumber = (str) => {
     return /[a-zA-Z0-9]/.test(str);
 };
 
+const isNumberRegex = (number) => {
+    return /[0-9]+/.test(number);
+};
+
 const extractQueryObject = (str, res) => {
-    let {projectId, postType, vipPostType} = str;
+    let {projectId, postType, vipPostType, minArea, maxArea} = str;
     let query = {};
-    if (projectId) {
-        if (!testInputData(projectId)) {
+    let area = {};
+
+    if (minArea !== undefined) {
+        if (!isNumberRegex(minArea)) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: "Input data not match"
+                message: "Error invalid number"
+            });
+
+            return false;
+        }
+
+        if (minArea <= 0) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Error invalid number"
+            });
+
+            return false;
+        }
+
+        area.$gte = minArea;
+        query.area = area;
+    }
+
+    if (maxArea !== undefined) {
+        if (!isNumberRegex(maxArea)) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Error invalid number"
+            });
+
+            return false;
+        }
+
+        if (maxArea <= minArea) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Error invalid number"
+            });
+
+            return false;
+        }
+
+        area.$lte = maxArea;
+        query.area = area;
+    }
+
+    if (projectId) {
+        if (!isAlphabetAndNumber(projectId)) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Error invalid alphabet and number "
             });
             return false;
         }
 
         if (projectId.length !== 24) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: 'Input data not match'
+                message: "Error invalid object id length"
             });
 
             return false;
@@ -34,17 +83,17 @@ const extractQueryObject = (str, res) => {
         query.projectId = projectId;
     }
 
-    for (let i = 0; i < fields.length; i++) {
-        if (str[fields[i]]) {
-            if (!testInputData(str[fields[i]])) {
+    for (let i = 0; i < addressFields.length; i++) {
+        if (str[addressFields[i]]) {
+            if (!isAlphabetAndNumber(str[addressFields[i]])) {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                    message: "Input data not match"
+                    message: "Error invalid alphabet and number"
                 });
 
                 return false;
             }
 
-            query[fields[i]] = str[fields[i]];
+            query[addressFields[i]] = str[addressFields[i]];
         }
     }
 
@@ -52,7 +101,7 @@ const extractQueryObject = (str, res) => {
     if (postType) {
         if (postTypeIds.indexOf(postType) === -1) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: "Input data not match"
+                message: "Error invalid number"
             });
 
             return false;
@@ -64,7 +113,7 @@ const extractQueryObject = (str, res) => {
     if (vipPostType) {
         if (vipTypeSNumber.indexOf(vipPostType) === -1) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: "Input data not match"
+                message: "Error invalid number"
             });
 
             return false;
@@ -78,17 +127,17 @@ const extractQueryObject = (str, res) => {
 
 const extractSortObject = (str, res) => {
     let {sortBy, sortDirection} = str;
-    if (!testInputData(sortBy)) {
+    if (!isAlphabetAndNumber(sortBy)) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            message: "Input data not match"
+            message: "Error invalid alphabet and number"
         });
 
         return false;
     }
 
-    if (!testInputData(sortDirection)) {
+    if (!isAlphabetAndNumber(sortDirection)) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            message: "Input data not match"
+            message: "Error invalid alphabet and number"
         });
 
         return false;
@@ -120,36 +169,39 @@ const extractPagination = (str, res) => {
     let {limit, page} = str;
     let pagination = {};
     if (limit !== undefined) {
-        if (!/[0-9]+/.test(limit)) {
-            pagination.limit = 10;
-        }
-
         if (isNaN(limit)) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: "Input data not match"
+                message: "Error invalid number"
             });
 
             return false;
+        }
+
+        if (!isNumberRegex(limit)) {
+            pagination.limit = 10;
         } else {
             pagination.limit = parseInt(limit);
         }
+
     } else {
         pagination.limit = 10;
     }
-    if (page !== undefined) {
-        if (!/[0-9]+/.test(page)) {
-            pagination.page = 0;
-        }
 
+    if (page !== undefined) {
         if (isNaN(page)) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: "Input data not match"
+                message: "Error invalid number"
             });
 
             return false;
+        }
+
+        if (!isNumberRegex(page)) {
+            pagination.page = 0;
         } else {
             pagination.page = parseInt(page);
         }
+
     } else {
         pagination.page = 0;
     }

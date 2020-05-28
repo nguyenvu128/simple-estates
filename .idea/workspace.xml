@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd3af683-1f4a-4811-b596-e4e41b89b565" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/constant/post-type.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/constant/vip-type.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controllers/posts.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/posts.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/ex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-estates" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +40,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="8.10.0" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../simple-crawler" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
@@ -78,7 +76,8 @@
       <workItem from="1590493104784" duration="14843000" />
       <workItem from="1590547180746" duration="7744000" />
       <workItem from="1590575401186" duration="20412000" />
-      <workItem from="1590631612524" duration="6840000" />
+      <workItem from="1590631612524" duration="7800000" />
+      <workItem from="1590660768645" duration="7744000" />
     </task>
     <servers />
   </component>
@@ -101,10 +100,10 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1017" height="568" key="DebuggerActiveHint/67.27.1853.1053@67.27.1853.1053" timestamp="1590636971565" />
-    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1590555794312">
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1590665398952">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1590555794312" />
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1590665398952" />
     <state width="1830" height="212" key="GridCell.Tab.0.bottom" timestamp="1590637911857">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
