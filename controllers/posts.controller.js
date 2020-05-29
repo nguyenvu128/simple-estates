@@ -262,6 +262,60 @@ const getListPosts = async (req, res) => {
     }
 };
 
+const getDetailPost = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        if(!isAlphabetAndNumber(slug)){
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: "Error invalid alphabet and number"
+            });
+        }
+
+        const detailPost = await postModel.findOne({slug: slug});
+        if(!detailPost){
+            return res.status(HttpStatus.NOT_FOUND).json({
+                message: "Không tìm thấy"
+            })
+        }
+
+        return res.status(HttpStatus.OK).json({
+            title: detailPost.title,
+            price: detailPost.price,
+            priceUnit: detailPost.priceUnit,
+            area: detailPost.area,
+            areaUnit: detailPost.areaUnit,
+            introduce: detailPost.introduce,
+            images: detailPost.images,
+            postType: detailPost.postType,
+            address: detailPost.address,
+            city: detailPost.city,
+            district: detailPost.district,
+            ward: detailPost.ward,
+            street: detailPost.street,
+            url: detailPost.url,
+            projectName: detailPost.projectName,
+            projectId: detailPost.projectId,
+            bedrooms: detailPost.bedrooms,
+            toilets: detailPost.toilets,
+            contactName: detailPost.contactName,
+            contactAddress: detailPost.contactAddress,
+            contactPhone: detailPost.contactPhone,
+            contactEmail: detailPost.contactEmail,
+            code: detailPost.code,
+            vipPostType: detailPost.vipPostType,
+            postedAt: detailPost.postedAt,
+            expiredAt: detailPost.expiredAt,
+            slug: detailPost.slug
+        });
+    }catch (e) {
+        console.log(e);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: JSON.stringify(e)
+        });
+    }
+};
+
 module.exports = {
-    getListPosts
+    getListPosts,
+    getDetailPost
 };
