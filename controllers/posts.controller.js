@@ -10,7 +10,7 @@ const VIP_TYPE = require('../constant/vip-type');
 const postTypeIds = POST_TYPE.map(type => type.id);
 const vipTypeSNumber = Object.values(VIP_TYPE).map(numb => numb.toString());
 const isAlphabetAndNumber = (str) => {
-    return /[a-zA-Z0-9]/.test(str);
+    return /[-a-zA-Z0-9]+/.test(str);
 };
 
 const isNumberRegex = (number) => {
@@ -39,7 +39,7 @@ const extractQueryObject = (str, res) => {
             return false;
         }
 
-        area.$gte = minArea;
+        area.$gte = parseInt(minArea);
         query.area = area;
     }
 
@@ -52,7 +52,7 @@ const extractQueryObject = (str, res) => {
             return false;
         }
 
-        if (maxArea <= minArea) {
+        if (area.$gte !== undefined && maxArea <= minArea) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 message: "Error invalid number"
             });
@@ -60,7 +60,7 @@ const extractQueryObject = (str, res) => {
             return false;
         }
 
-        area.$lte = maxArea;
+        area.$lte = parseInt(maxArea);
         query.area = area;
     }
 
@@ -271,42 +271,15 @@ const getDetailPost = async (req, res) => {
             });
         }
 
-        const detailPost = await postModel.findOne({slug: slug});
+        const detailPost = await postModel.findOne({slug: slug})
+            .select("-_id -createdAt -updatedAt -__v");
         if(!detailPost){
             return res.status(HttpStatus.NOT_FOUND).json({
                 message: "Không tìm thấy"
             })
         }
 
-        return res.status(HttpStatus.OK).json({
-            title: detailPost.title,
-            price: detailPost.price,
-            priceUnit: detailPost.priceUnit,
-            area: detailPost.area,
-            areaUnit: detailPost.areaUnit,
-            introduce: detailPost.introduce,
-            images: detailPost.images,
-            postType: detailPost.postType,
-            address: detailPost.address,
-            city: detailPost.city,
-            district: detailPost.district,
-            ward: detailPost.ward,
-            street: detailPost.street,
-            url: detailPost.url,
-            projectName: detailPost.projectName,
-            projectId: detailPost.projectId,
-            bedrooms: detailPost.bedrooms,
-            toilets: detailPost.toilets,
-            contactName: detailPost.contactName,
-            contactAddress: detailPost.contactAddress,
-            contactPhone: detailPost.contactPhone,
-            contactEmail: detailPost.contactEmail,
-            code: detailPost.code,
-            vipPostType: detailPost.vipPostType,
-            postedAt: detailPost.postedAt,
-            expiredAt: detailPost.expiredAt,
-            slug: detailPost.slug
-        });
+        return res.status(HttpStatus.OK).json(detailPost);
     }catch (e) {
         console.log(e);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
