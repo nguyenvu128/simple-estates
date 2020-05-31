@@ -265,7 +265,7 @@ const getListPosts = async (req, res) => {
 const getDetailPost = async (req, res) => {
     try {
         const slug = req.params.slug;
-        if(!isAlphabetAndNumber(slug)){
+        if (!isAlphabetAndNumber(slug)) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 message: "Error invalid alphabet and number"
             });
@@ -273,14 +273,37 @@ const getDetailPost = async (req, res) => {
 
         const detailPost = await postModel.findOne({slug: slug})
             .select("-_id -createdAt -updatedAt -__v");
-        if(!detailPost){
+        if (!detailPost) {
             return res.status(HttpStatus.NOT_FOUND).json({
                 message: "Không tìm thấy"
             })
         }
 
         return res.status(HttpStatus.OK).json(detailPost);
-    }catch (e) {
+    } catch (e) {
+        console.log(e);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: JSON.stringify(e)
+        });
+    }
+};
+
+const getStatisticPost = async (req, res) => {
+    try {
+        const statistics = await postModel.aggregate([
+            {
+                $group: {
+                    _id: "$city",
+                    count: {$sum: 1}
+                }
+            },
+            {
+                $sort: {count: -1}
+            }
+        ])
+
+        return res.status(HttpStatus.OK).json(statistics);
+    } catch (e) {
         console.log(e);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message: JSON.stringify(e)
@@ -290,5 +313,6 @@ const getDetailPost = async (req, res) => {
 
 module.exports = {
     getListPosts,
-    getDetailPost
+    getDetailPost,
+    getStatisticPost
 };
