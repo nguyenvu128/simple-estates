@@ -3,14 +3,17 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const userSchema = new Schema ({
     email: String,
-    password: String,
+    passwordSalt  : String,
+    hashedPassword: String,
     address: String,
     name: String,
     age: Number,
     phone: Number,
     gender: String,
     avatar: String,
-    role: Number
+    role: Number,
+    tokenRegister: String,
+    status: Number
 });
 
 const User = new mongoose.model("User", userSchema);
