@@ -55,7 +55,7 @@ const getUserLogin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({email: user.email});
+        const token = jwt.sign({email: user.email}, password);
         return res.status(HttpStatus.OK).json({
             message: "Đăng nhập thành công",
             token: token
