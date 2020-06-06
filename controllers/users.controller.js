@@ -6,16 +6,16 @@ const jwt = require('jsonwebtoken');
 const randomString = require('randomstring');
 
 
-const checkValidatorEmail = (email) => {
+const isValidatorEmail = (email) => {
     const filter = new RegExp('^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$', 'i');
     return filter.test(email);
 };
 
 const isAlphabetAndNumber = (str) => {
-    return /[-a-zA-Z0-9]+/.test(str);
+    return /[a-zA-Z0-9]+/.test(str);
 };
 
-const getUserLogin = async (req, res) => {
+const userLogin = async (req, res) => {
     try {
         const {email, password} = req.body;
         if (!email || !password) {
@@ -24,7 +24,7 @@ const getUserLogin = async (req, res) => {
             });
         }
 
-        if (!checkValidatorEmail(email)) {
+        if (!isValidatorEmail(email)) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Email không hợp lệ"
             });
@@ -55,7 +55,7 @@ const getUserLogin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({email: user.email}, password);
+        const token = jwt.sign({email: user.email}, process.env.private_key);
         return res.status(HttpStatus.OK).json({
             message: "Đăng nhập thành công",
             token: token
@@ -68,17 +68,12 @@ const getUserLogin = async (req, res) => {
     }
 };
 
-const getUserRegister = async (req, res) => {
+const registerNewUser = async (req, res) => {
     try {
         const {
             email,
             password,
             confirmedPassword,
-            address,
-            name,
-            age,
-            phone,
-            gender,
         } = req.body
 
         if (!email || !password || !confirmedPassword) {
@@ -87,7 +82,7 @@ const getUserRegister = async (req, res) => {
             });
         }
 
-        if (!checkValidatorEmail(email)) {
+        if (!isValidatorEmail(email)) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Email không hợp lệ"
             });
@@ -119,11 +114,6 @@ const getUserRegister = async (req, res) => {
             email: email,
             passwordSalt: saltRounds,
             hashedPassword: hashedPassword,
-            address: address,
-            name: name,
-            age: age,
-            phone: phone,
-            gender: gender,
             tokenRegister: tokenRegister,
             status: 2
         });
@@ -140,24 +130,12 @@ const getUserRegister = async (req, res) => {
     }
 };
 
-const getConfirmUse = async (req, res) => {
+const confirmUser = async (req, res) => {
     try {
         const {tokenRegister} = req.body;
         if (!tokenRegister) {
             return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Lỗi tokenRegister undefined"
-            });
-        }
-
-        if (!isAlphabetAndNumber(tokenRegister)) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Lỗi ký tự và số không hợp lệ"
-            });
-        }
-
-        if (tokenRegister.length !== 32) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Lỗi tokenRegis không đủ 32 ký tự "
+                message: "Yêu cầu không hợp lệ"
             });
         }
 
@@ -185,7 +163,7 @@ const getConfirmUse = async (req, res) => {
 };
 
 module.exports = {
-    getUserLogin,
-    getUserRegister,
-    getConfirmUse
+    userLogin,
+    registerNewUser,
+    confirmUser
 };
