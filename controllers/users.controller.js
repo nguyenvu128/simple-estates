@@ -196,6 +196,7 @@ const forgetPassword = async (req, res) => {
     };
 
     const user = await UserModel.findOneAndUpdate({email: email}, fieldUpdate);
+
     if(!user) {
         return res.status(HttpStatus.BAD_REQUEST).json({
             message: "Yêu cầu không hợp lệ"
