@@ -17,6 +17,6 @@
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.15",
-    "randomstring": "^1.1.5"
+    "unique-string": "^2.0.0"
   }
 }

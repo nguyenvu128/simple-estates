@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UserModel = require('../models/users.model');
 const HttpStatus = require('http-status-codes');
 const jwt = require('jsonwebtoken');
-const randomString = require('randomstring');
+const uniqueString = require('unique-string');
 
 
 const isValidatorEmail = (email) => {
@@ -107,7 +107,7 @@ const registerNewUser = async (req, res) => {
             });
         }
 
-        const tokenRegister = randomString.generate(32);
+        const tokenRegister = uniqueString();
         const saltRounds = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
         const userDb = new UserModel({
