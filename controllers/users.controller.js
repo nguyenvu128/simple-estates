@@ -68,6 +68,26 @@ const userLogin = async (req, res) => {
     }
 };
 
+const isValidatorPassword = (str, res) => {
+    const {password, confirmPassword} = str;
+    if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmPassword)) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Password không hợp lệ"
+        });
+
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Hai mật khẩu không giống nhau"
+        });
+
+        return false;
+    }
+
+};
+
 const registerNewUser = async (req, res) => {
     try {
         const {
@@ -88,16 +108,9 @@ const registerNewUser = async (req, res) => {
             });
         }
 
-        if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmPassword)) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Password không hợp lệ"
-            });
-        }
-
-        if (password !== confirmPassword) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Hai mật khẩu không giống nhau"
-            });
+        const checkedPassword = isValidatorPassword(req.body, res);
+        if(checkedPassword === false){
+            return;
         }
 
         const user = await UserModel.findOne({email: email});
