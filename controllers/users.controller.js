@@ -15,6 +15,26 @@ const isAlphabetAndNumber = (str) => {
     return /[a-zA-Z0-9]+/.test(str);
 };
 
+const isValidatorPassword = (str, res) => {
+    const {password, confirmPassword} = str;
+    if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmPassword)) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Password không hợp lệ"
+        });
+
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Hai mật khẩu không giống nhau"
+        });
+
+        return false;
+    }
+
+};
+
 const userLogin = async (req, res) => {
     try {
         const {email, password} = req.body;
@@ -68,25 +88,6 @@ const userLogin = async (req, res) => {
     }
 };
 
-const isValidatorPassword = (str, res) => {
-    const {password, confirmPassword} = str;
-    if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmPassword)) {
-        res.status(HttpStatus.BAD_REQUEST).json({
-            message: "Password không hợp lệ"
-        });
-
-        return false;
-    }
-
-    if (password !== confirmPassword) {
-        res.status(HttpStatus.BAD_REQUEST).json({
-            message: "Hai mật khẩu không giống nhau"
-        });
-
-        return false;
-    }
-
-};
 
 const registerNewUser = async (req, res) => {
     try {
