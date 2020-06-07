@@ -73,10 +73,10 @@ const registerNewUser = async (req, res) => {
         const {
             email,
             password,
-            confirmedPassword,
+            confirmPassword,
         } = req.body
 
-        if (!email || !password || !confirmedPassword) {
+        if (!email || !password || !confirmPassword) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Vui lòng điền đủ thông tin"
             });
@@ -88,13 +88,13 @@ const registerNewUser = async (req, res) => {
             });
         }
 
-        if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmedPassword)) {
+        if (!isAlphabetAndNumber(password) && !isAlphabetAndNumber(confirmPassword)) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Password không hợp lệ"
             });
         }
 
-        if (password !== confirmedPassword) {
+        if (password !== confirmPassword) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Hai mật khẩu không giống nhau"
             });
