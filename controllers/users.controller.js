@@ -208,9 +208,46 @@ const forgetPassword = async (req, res) => {
     });
 };
 
+const resetPassword = async (req, res) => {
+    const {token, password} = req.body;
+
+    const checkedPassword = isValidatorPassword(req.body, res);
+    if(checkedPassword === false){
+        return;
+    }
+
+    const user = await UserModel.findOne({forgetPasswordToken: token});
+
+    if(!user) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    if(user.status === 1) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    const newHashedPassword = bcrypt.hashSync(password, user.passwordSalt);
+    const fieldUpdate = {
+        hashedPassword: newHashedPassword,
+        status: 1,
+        forgetPasswordToken: ""
+    };
+
+    await UserModel.update({_id: user._id}, fieldUpdate);
+
+    return res.status(HttpStatus.OK).json({
+        message: "Cập nhật mật khẩu thành công"
+    });
+};
+
 module.exports = {
     userLogin,
     registerNewUser,
     confirmUser,
-    forgetPassword
+    forgetPassword,
+    resetPassword
 };
