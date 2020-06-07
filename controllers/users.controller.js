@@ -176,8 +176,40 @@ const confirmUser = async (req, res) => {
     }
 };
 
+const forgetPassword = async (req, res) => {
+    const {email} = req.body;
+    if(!email) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    if (!isValidatorEmail(email)) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    const fieldUpdate = {
+        forgetPasswordToken: uniqueString(),
+        status: 2
+    };
+
+    const user = await UserModel.findOneAndUpdate({email: email}, fieldUpdate);
+    if(!user) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    return res.status(HttpStatus.OK).json({
+        message: "Hệ thống đã gửi email đổi mật khẩu. Vui lòng kiểm tra"
+    });
+};
+
 module.exports = {
     userLogin,
     registerNewUser,
-    confirmUser
+    confirmUser,
+    forgetPassword
 };
