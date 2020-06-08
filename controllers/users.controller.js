@@ -209,7 +209,7 @@ const forgetPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-    const {token, password} = req.body;
+    const {token, password, confirmPassword} = req.body;
 
     const checkedPassword = isValidatorPassword(req.body, res);
     if(checkedPassword === false){
