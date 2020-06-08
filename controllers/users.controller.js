@@ -33,6 +33,7 @@ const isValidatorPassword = (str, res) => {
         return false;
     }
 
+    return true;
 };
 
 const userLogin = async (req, res) => {
