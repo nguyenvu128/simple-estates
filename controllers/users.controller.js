@@ -33,6 +33,7 @@ const isValidatorPassword = (str, res) => {
         return false;
     }
 
+    return true;
 };
 
 const userLogin = async (req, res) => {
@@ -176,8 +177,78 @@ const confirmUser = async (req, res) => {
     }
 };
 
+const forgetPassword = async (req, res) => {
+    const {email} = req.body;
+    if(!email) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    if (!isValidatorEmail(email)) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    const fieldUpdate = {
+        forgetPasswordToken: uniqueString(),
+        status: 2
+    };
+
+    const user = await UserModel.findOneAndUpdate({email: email}, fieldUpdate);
+
+    if(!user) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    return res.status(HttpStatus.OK).json({
+        message: "Hệ thống đã gửi email đổi mật khẩu. Vui lòng kiểm tra"
+    });
+};
+
+const resetPassword = async (req, res) => {
+    const {token, password} = req.body;
+
+    const checkedPassword = isValidatorPassword(req.body, res);
+    if(checkedPassword === false){
+        return;
+    }
+
+    const user = await UserModel.findOne({forgetPasswordToken: token});
+
+    if(!user) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    if(user.status === 1) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Yêu cầu không hợp lệ"
+        });
+    }
+
+    const newHashedPassword = bcrypt.hashSync(password, user.passwordSalt);
+    const fieldUpdate = {
+        hashedPassword: newHashedPassword,
+        status: 1,
+        forgetPasswordToken: ""
+    };
+
+    await UserModel.update({_id: user._id}, fieldUpdate);
+
+    return res.status(HttpStatus.OK).json({
+        message: "Cập nhật mật khẩu thành công"
+    });
+};
+
 module.exports = {
     userLogin,
     registerNewUser,
-    confirmUser
+    confirmUser,
+    forgetPassword,
+    resetPassword
 };
