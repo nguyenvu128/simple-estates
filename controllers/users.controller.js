@@ -4,7 +4,7 @@ const UserModel = require('../models/users.model');
 const HttpStatus = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const uniqueString = require('unique-string');
-
+const TokenModel = require('../models/tokens.model');
 
 const isValidatorEmail = (email) => {
     const filter = new RegExp('^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$', 'i');
@@ -77,6 +77,13 @@ const userLogin = async (req, res) => {
         }
 
         const token = jwt.sign({email: user.email}, process.env.private_key);
+        const tokenUser = new TokenModel({
+            userId: user._id,
+            token: token,
+            expiredAt: Date.now()
+        });
+
+        await tokenUser.save();
         return res.status(HttpStatus.OK).json({
             message: "Đăng nhập thành công",
             token: token
