@@ -5,9 +5,9 @@ const CommentsModel = require('../models/comments.model');
 const createComment = async (req, res) => {
     try {
         const {type, postId, commentId, content} = req.body;
-        if(type !== 'POST' || type !== 'COMMENT') {
+        if(type !== "POST" && type !== "COMMENT") {
             return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Không hợp lệ"
+                message: "Không hợp lệ "
             });
         }
 
@@ -42,6 +42,12 @@ const createComment = async (req, res) => {
             }
 
             query.commentId = commentId;
+        }
+
+        if(!content) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                message: "Không hợp lệ"
+            });
         }
 
         const comment = await CommentsModel.findOne(query);
