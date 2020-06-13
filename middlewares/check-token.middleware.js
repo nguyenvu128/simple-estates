@@ -1,6 +1,6 @@
 const HttpStatus = require('http-status-codes');
-const TokenModel = require('/models/tokens.model');
-const UserModel = require('/models/users.model');
+const TokenModel = require('../models/tokens.model');
+const UserModel = require('../models/users.model');
 
 module.exports = async (req, res, next) => {
     const token = req.headers['token'] || req.query.token || req.body.token;
