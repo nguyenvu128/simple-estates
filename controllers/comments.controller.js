@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const HttpStatus = require('http-status-codes');
 const CommentsModel = require('../models/comments.model');
+const PostsModel = require('../models/post.model');
 
 const createComment = async (req, res) => {
     try {
@@ -11,7 +12,13 @@ const createComment = async (req, res) => {
             });
         }
 
-        const query = {};
+        if(!content) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                message: "Không hợp lệ"
+            });
+        }
+
+        let commentData = {};
         if(type === 'POST') {
             if(!postId) {
                 return res.status(HttpStatus.BAD_REQUEST).json({
@@ -25,7 +32,19 @@ const createComment = async (req, res) => {
                 });
             }
 
-            query.postId = postId;
+            const post = await PostsModel.findOne({_id: postId});
+
+            if(!post) {
+                return res.status(HttpStatus.BAD_REQUEST).json({
+                    message: "Không hợp lệ"
+                });
+            }
+
+            commentData = {
+                userId: req.user._id,
+                postId: postId,
+                text: content,
+            };
         }
 
         if(type === "COMMENT") {
@@ -41,37 +60,25 @@ const createComment = async (req, res) => {
                 });
             }
 
-            query.commentId = commentId;
+            const comment = await CommentsModel.findOne({_id: commentId});
+
+
+            if(!comment) {
+                return res.status(HttpStatus.BAD_REQUEST).json({
+                    message: "Không hợp lệ"
+                });
+            }
+
+            commentData = {
+                userId: req.user._id,
+                postId: comment.postId,
+                text: content,
+                parentCommentId: commentId
+            };
         }
 
-        if(!content) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Không hợp lệ"
-            });
-        }
-
-        const comment = await CommentsModel.findOne(query);
-
-        if (!comment.commentId) {
-          return res.status(HttpStatus.BAD_REQUEST).json({
-              message: "Không hợp lệ"
-          });
-        }
-
-        if(!comment.postId) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: "Không hợp lệ"
-            });
-        }
-
-        const commentDb = new CommentsModel ({
-            userId: req.user._id,
-            postId: postId,
-            text: content,
-            parentCommentId: commentId
-        });
-
-        await commentDb.save();
+        const commentModel= new CommentsModel (commentData);
+        await commentModel.save();
         return res.status(HttpStatus.OK).json({
             message: "Thành công"
         });
