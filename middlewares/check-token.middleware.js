@@ -1,6 +1,6 @@
 const HttpStatus = require('http-status-codes');
-const TokenModel = require('../models/tokens.model');
 const UserModel = require('../models/users.model');
+const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res, next) => {
     const token = req.headers['token'] || req.query.token || req.body.token;
@@ -11,14 +11,8 @@ module.exports = async (req, res, next) => {
         });
     }
 
-    const userToken = await TokenModel.findOne({token});
-    if(!userToken) {
-        return res.status(HttpStatus.UNAUTHORIZED).json({
-            message: "Token không hợp lệ"
-        });
-    }
-
-    const user = await UserModel.findOne({_id: userToken.userId});
+    const verifyToken = jwt.verify(token, process.env.private_key);
+    const user = await UserModel.findOne({email: verifyToken.email});
     if(!user) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
             message: "Token không hợp lệ"
