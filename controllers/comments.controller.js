@@ -42,7 +42,7 @@ const createComment = async (req, res) => {
 
             commentData = {
                 userId: req.user._id,
-                postId: postId,
+                postId: mongoose.Types.ObjectId(postId),
                 text: content,
             };
         }
