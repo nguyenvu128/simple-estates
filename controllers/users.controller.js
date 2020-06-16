@@ -5,7 +5,6 @@ const HttpStatus = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const uniqueString = require('unique-string');
 
-
 const isValidatorEmail = (email) => {
     const filter = new RegExp('^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$', 'i');
     return filter.test(email);
