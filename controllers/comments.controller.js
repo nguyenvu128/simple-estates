@@ -72,7 +72,7 @@ const createComment = async (req, res) => {
             commentData = {
                 userId: req.user._id,
                 text: content,
-                parentCommentId: mongoose.Types.ObjectId(commentId);
+                parentCommentId: mongoose.Types.ObjectId(commentId)
             };
         }
 
