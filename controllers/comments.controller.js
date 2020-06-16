@@ -71,7 +71,6 @@ const createComment = async (req, res) => {
 
             commentData = {
                 userId: req.user._id,
-                postId: comment.postId,
                 text: content,
                 parentCommentId: commentId
             };
