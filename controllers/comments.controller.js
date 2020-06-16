@@ -3,9 +3,31 @@ const HttpStatus = require('http-status-codes');
 const CommentsModel = require('../models/comments.model');
 const PostsModel = require('../models/post.model');
 
+const isInvalidType = (str, res) => {
+
+    if(!str) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Không hợp lệ"
+        });
+
+        return false;
+    }
+
+    if(str.length !== 24) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            message: "Không hợp lệ"
+        });
+
+        return false;
+    }
+
+    return true;
+};
+
 const createComment = async (req, res) => {
     try {
         const {type, postId, commentId, content} = req.body;
+        let commentData = {};
         if(type !== "POST" && type !== "COMMENT") {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Không hợp lệ "
@@ -18,18 +40,10 @@ const createComment = async (req, res) => {
             });
         }
 
-        let commentData = {};
-        if(type === 'POST') {
-            if(!postId) {
-                return res.status(HttpStatus.BAD_REQUEST).json({
-                    message: "Không hợp lệ"
-                });
-            }
-
-            if(postId.length !== 24) {
-                return res.status(HttpStatus.BAD_REQUEST).json({
-                    message: "Không hợp lệ"
-                });
+        if(type === "POST") {
+            const isValidatorPostId = isInvalidType(postId, res);
+            if(isValidatorPostId === false) {
+                return;
             }
 
             const post = await PostsModel.findOne({_id: postId});
@@ -48,16 +62,9 @@ const createComment = async (req, res) => {
         }
 
         if(type === "COMMENT") {
-            if(!commentId) {
-                return res.status(HttpStatus.BAD_REQUEST).json({
-                    message: "Không hợp lệ"
-                });
-            }
-
-            if(commentId.length !== 24) {
-                return res.status(HttpStatus.BAD_REQUEST).json({
-                    message: "Không hợp lệ"
-                });
+            const isValidatorCommentId = isInvalidType(commentId, res);
+            if(isValidatorCommentId === false) {
+                return;
             }
 
             const comment = await CommentsModel.findOne({_id: commentId});

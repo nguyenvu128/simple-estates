@@ -22,3 +22,33 @@ module.exports = async (req, res, next) => {
     req.user = user;
     return next();
 };
+// const getListComments = async (req, res) => {
+//     try {
+//         const {type, page, commentId, postId} = req.query;
+//         if(type !== "POST" && type !== "COMMENT") {
+//             return res.status(HttpStatus.BAD_REQUEST).json({
+//                 message: "Yêu cầu không hợp lệ"
+//             });
+//         }
+//
+//         const pagination = PostController.extractPagination(req.query, res);
+//         if(pagination === false) {
+//             return;
+//         }
+//
+//         if(type === "POST") {
+//             const isValidatorPostId = isInvalidType(postId, res);
+//             if(isValidatorPostId === false) {
+//                 return;
+//             }
+//
+//             const comment = await CommentsModel.find({postId: postId})
+//
+//         }
+//     } catch (e) {
+//         console.log(e);
+//         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+//             message: JSON.stringify(e)
+//         });
+//     }
+// };
