@@ -314,5 +314,7 @@ const getStatisticPost = async (req, res) => {
 module.exports = {
     getListPosts,
     getDetailPost,
-    getStatisticPost
+    getStatisticPost,
+    isNumberRegex,
+    extractPagination
 };
