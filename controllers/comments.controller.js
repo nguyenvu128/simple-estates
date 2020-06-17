@@ -29,17 +29,15 @@ const isInvalidType = (str, res) => {
 const extractPromiseAllComments = (comments) => {
     return Promise.all(comments.map(async (cmt) => {
         const user = await UserModel.findOne({_id: cmt.userId});
-
-        if (!user) {
-            return;
-        }
-        return {
-            content: cmt.text,
-            updatedAt: cmt.updatedAt,
-            email: user.email
+        if (user !== null) {
+            return {
+                content: cmt.text,
+                updatedAt: cmt.updatedAt,
+                email: user.email
+            }
         }
     }))
-}
+};
 
 const createComment = async (req, res) => {
     try {
