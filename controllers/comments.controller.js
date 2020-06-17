@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const HttpStatus = require('http-status-codes');
 const CommentsModel = require('../models/comments.model');
 const PostsModel = require('../models/post.model');
+const PostController = require('./posts.controller');
+const UserModel = require('../models/users.model');
 
 const isInvalidType = (str, res) => {
 
-    if(!str) {
+    if (!str) {
         res.status(HttpStatus.BAD_REQUEST).json({
             message: "Không hợp lệ"
         });
@@ -13,7 +15,7 @@ const isInvalidType = (str, res) => {
         return false;
     }
 
-    if(str.length !== 24) {
+    if (str.length !== 24) {
         res.status(HttpStatus.BAD_REQUEST).json({
             message: "Không hợp lệ"
         });
@@ -28,27 +30,27 @@ const createComment = async (req, res) => {
     try {
         const {type, postId, commentId, content} = req.body;
         let commentData = {};
-        if(type !== "POST" && type !== "COMMENT") {
+        if (type !== "POST" && type !== "COMMENT") {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Không hợp lệ "
             });
         }
 
-        if(!content) {
+        if (!content) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 message: "Không hợp lệ"
             });
         }
 
-        if(type === "POST") {
+        if (type === "POST") {
             const isValidatorPostId = isInvalidType(postId, res);
-            if(isValidatorPostId === false) {
+            if (isValidatorPostId === false) {
                 return;
             }
 
             const post = await PostsModel.findOne({_id: postId});
 
-            if(!post) {
+            if (!post) {
                 return res.status(HttpStatus.BAD_REQUEST).json({
                     message: "Không hợp lệ"
                 });
@@ -61,16 +63,16 @@ const createComment = async (req, res) => {
             };
         }
 
-        if(type === "COMMENT") {
+        if (type === "COMMENT") {
             const isValidatorCommentId = isInvalidType(commentId, res);
-            if(isValidatorCommentId === false) {
+            if (isValidatorCommentId === false) {
                 return;
             }
 
             const comment = await CommentsModel.findOne({_id: commentId});
 
 
-            if(!comment) {
+            if (!comment) {
                 return res.status(HttpStatus.BAD_REQUEST).json({
                     message: "Không hợp lệ"
                 });
@@ -83,7 +85,7 @@ const createComment = async (req, res) => {
             };
         }
 
-        const commentModel= new CommentsModel (commentData);
+        const commentModel = new CommentsModel(commentData);
         await commentModel.save();
         return res.status(HttpStatus.OK).json({
             message: "Thành công"
@@ -96,7 +98,6 @@ const createComment = async (req, res) => {
         });
     }
 };
-
 module.exports = {
-    createComment
+    createComment,
 };
