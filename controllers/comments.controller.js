@@ -98,6 +98,59 @@ const createComment = async (req, res) => {
         });
     }
 };
+
+const getListComments = async (req, res) => {
+    try {
+        let {type, commentId, postId} = req.query;
+        let listComments = [];
+        let queryId = {};
+        if (type !== "POST" && type !== "COMMENT") {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                message: "Yêu cầu không hợp lệ"
+            });
+        }
+
+        const pagination = PostController.extractPagination(req.query, res);
+        if (pagination === false) {
+            return;
+        }
+
+        if (type === "POST") {
+            const isValidatorPostId = isInvalidType(postId, res);
+            if (isValidatorPostId === false) {
+                return;
+            }
+            queryId.postId = postId;
+        }
+
+        if (type === "COMMENT") {
+            const isValidatorPostId = isInvalidType(commentId, res);
+            if (isValidatorPostId === false) {
+                return;
+            }
+            queryId.parentCommentId = commentId;
+        }
+
+        const comments = await CommentsModel.find(queryId)
+            .skip(pagination.page * pagination.limit)
+            .sort({updatedAt: -1})
+            .limit(pagination.limit);
+
+        await extractPromiseAllComments(comments).then(res => listComments = res);
+
+        return res.status(HttpStatus.OK).json({
+            message: "Thành công",
+            comments: listComments
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: JSON.stringify(e)
+        });
+    }
+};
+
 module.exports = {
     createComment,
+    getListComments
 };
