@@ -5,7 +5,7 @@ const PostsModel = require('../models/post.model');
 const PostController = require('./posts.controller');
 const UserModel = require('../models/users.model');
 
-const isInvalidType = (str, res) => {
+const isValidType = (str, res) => {
 
     if (!str) {
         res.status(HttpStatus.BAD_REQUEST).json({
@@ -56,7 +56,7 @@ const createComment = async (req, res) => {
         }
 
         if (type === "POST") {
-            const isValidatorPostId = isInvalidType(postId, res);
+            const isValidatorPostId = isValidType(postId, res);
             if (isValidatorPostId === false) {
                 return;
             }
@@ -77,7 +77,7 @@ const createComment = async (req, res) => {
         }
 
         if (type === "COMMENT") {
-            const isValidatorCommentId = isInvalidType(commentId, res);
+            const isValidatorCommentId = isValidType(commentId, res);
             if (isValidatorCommentId === false) {
                 return;
             }
@@ -129,7 +129,7 @@ const getListComments = async (req, res) => {
         }
 
         if (type === "POST") {
-            const isValidatorPostId = isInvalidType(postId, res);
+            const isValidatorPostId = isValidType(postId, res);
             if (isValidatorPostId === false) {
                 return;
             }
@@ -137,7 +137,7 @@ const getListComments = async (req, res) => {
         }
 
         if (type === "COMMENT") {
-            const isValidatorPostId = isInvalidType(commentId, res);
+            const isValidatorPostId = isValidType(commentId, res);
             if (isValidatorPostId === false) {
                 return;
             }
