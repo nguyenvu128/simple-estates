@@ -5,9 +5,9 @@ const PostsModel = require('../models/post.model');
 const PostController = require('./posts.controller');
 const UserModel = require('../models/users.model');
 
-const isValidType = (str, res) => {
+const isValidType = (mongoIdStr, res) => {
 
-    if (!str) {
+    if (!mongoIdStr) {
         res.status(HttpStatus.BAD_REQUEST).json({
             message: "Không hợp lệ"
         });
@@ -15,7 +15,7 @@ const isValidType = (str, res) => {
         return false;
     }
 
-    if (str.length !== 24) {
+    if (mongoIdStr.length !== 24) {
         res.status(HttpStatus.BAD_REQUEST).json({
             message: "Không hợp lệ"
         });
