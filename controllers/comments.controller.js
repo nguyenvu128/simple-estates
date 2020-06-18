@@ -29,13 +29,19 @@ const isValidType = (mongoIdStr, res) => {
 const extractPromiseAllComments = (comments) => {
     return Promise.all(comments.map(async (cmt) => {
         const user = await UserModel.findOne({_id: cmt.userId});
-        if (user !== null) {
+        if (!user) {
             return {
                 content: cmt.text,
                 updatedAt: cmt.updatedAt,
-                email: user.email
+                email: "Vô danh"
             }
         }
+        return {
+            content: cmt.text,
+            updatedAt: cmt.updatedAt,
+            email: user.email
+        }
+
     }))
 };
 
